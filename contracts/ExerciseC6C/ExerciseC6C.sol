@@ -14,6 +14,7 @@ contract ExerciseC6C {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
+    mapping (address => uint256) authorizedContracts;
     struct Profile {
         string id;
         bool isRegistered;
@@ -38,8 +39,8 @@ contract ExerciseC6C {
     */
     constructor
                                 (
-                                ) 
-                                public 
+                                )
+                                public
     {
         contractOwner = msg.sender;
     }
@@ -60,15 +61,30 @@ contract ExerciseC6C {
         _;
     }
 
+    modifier isCallerAuthorized()
+    {
+        require(authorizedContracts[msg.sender] == 1, "Caller is not authorized");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
+
+    function authorizeContract(address dataContract) external requireContractOwner {
+        authorizedContracts[dataContract] = 1;
+    }
+
+    function deAuthorizeContract(address dataContract) external requireContractOwner {
+        delete authorizedContracts[dataContract];
+    }
+
 
    /**
     * @dev Check if an employee is registered
     *
     * @return A bool that indicates if the employee is registered
-    */   
+    */
     function isEmployeeRegistered
                             (
                                 string id
@@ -124,49 +140,13 @@ contract ExerciseC6C {
                                     uint256 bonus
 
                                 )
-                                internal
-                                requireContractOwner
+                                external
     {
         require(employees[id].isRegistered, "Employee is not registered.");
 
         employees[id].sales = employees[id].sales.add(sales);
         employees[id].bonus = employees[id].bonus.add(bonus);
 
-    }
-
-    function calculateBonus
-                            (
-                                uint256 sales
-                            )
-                            internal
-                            view
-                            requireContractOwner
-                            returns(uint256)
-    {
-        if (sales < 100) {
-            return sales.mul(5).div(100);
-        }
-        else if (sales < 500) {
-            return sales.mul(7).div(100);
-        }
-        else {
-            return sales.mul(10).div(100);
-        }
-    }
-
-    function addSale
-                                (
-                                    string id,
-                                    uint256 amount
-                                )
-                                external
-                                requireContractOwner
-    {
-        updateEmployee(
-                        id,
-                        amount,
-                        calculateBonus(amount)
-        );
     }
 
 

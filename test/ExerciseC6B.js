@@ -21,7 +21,5 @@ contract('ExerciseC6B', async (accounts) => {
     assert.equal(result.toNumber(), new BigNumber(1000000).toNumber(), "Contract owner initial tokens incorrect");
 
   });
-
-
  
 });
