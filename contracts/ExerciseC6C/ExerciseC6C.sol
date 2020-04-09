@@ -39,8 +39,8 @@ contract ExerciseC6C {
     */
     constructor
                                 (
-                                ) 
-                                public 
+                                )
+                                public
     {
         contractOwner = msg.sender;
     }
